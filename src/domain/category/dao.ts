@@ -1,8 +1,26 @@
-import prisma from "../../config/prisma.js";
+import { desc, eq, isNull, like } from "drizzle-orm";
+import db from "../../config/db.js";
+import { category } from "../../database/schema/category.js";
+
+export const GetAllCategoryDAO = async () => {
+    try {
+        const data = await db.select().from(category).where(isNull(category.deletedAt));
+        return data;
+    } catch (error: any) {
+        throw new Error("Something went wrong : " + error.message);
+    }
+}
+
+export const GetCategoryByCode = async (code: string) => {
+    try {
+        const data = await db.select().from(category).where(eq(category.code, code));
+        return data;
+    } catch (error: any) {
+        throw new Error("Something went wrong : " + error.message);
+    }
+}
 
 export const CreateCategoryDAO = async (data: any) => {
-    const { name, icon, description, color } = data;
-
     try {
         // Get month year
         const now = new Date();
@@ -10,16 +28,14 @@ export const CreateCategoryDAO = async (data: any) => {
         const prefix = `CTY-${yearMonth}-`;
 
         // Get latest category
-        const latestCat = await prisma.category.findFirst({
-            where: {
-                code: {
-                    startsWith: prefix
-                },
-            },
-            orderBy: {
-                code: 'desc'
-            }
-        });
+        const latestCat = (
+            await db
+            .select()
+            .from(category)
+            .where(like(category.code, `${prefix}%`))
+            .orderBy(desc(category.code))
+            .limit(1)
+        )[0];
 
         let sequence = 1;
         if(latestCat) {
@@ -27,21 +43,26 @@ export const CreateCategoryDAO = async (data: any) => {
         }
 
         const code = `${prefix}${String(sequence).padStart(3, "0")}`;
-        console.log(code);
 
-        // const category = await prisma.category.create({
-        //     data: {
-        //         code: code,
-        //         name: name,
-        //         description: description,
-        //         icon: icon,
-        //         color: color,
-        //         is_active: true
-        //     }
-        // })
-        // return category;
+        await db.insert(category).values({
+            code: code,
+            name: data.name,
+            color: data.color,
+            icon: data.icon,
+            description: data.description,
+            isActive: true,
+            createdAt: now,
+        });
+        return category;
     } catch (error: any) {
-        console.log(error);
         throw new Error("Something went wrong : " + error.message);
+    }
+}
+
+export const UpdateCategoryDAO = async (data: any) => {
+    try {
+
+    } catch (error: any) {
+        
     }
 }
