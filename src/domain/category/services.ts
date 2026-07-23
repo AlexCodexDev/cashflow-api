@@ -28,3 +28,27 @@ export const CreateCategoryServices = async (data: any) => {
         throw new Error("Something went wrong : " + error.message);
     }
 }
+
+export const UpdateCategoryServices = async (data: any, code: string) => {
+    try {
+        if(!code) {
+            return ({ message: "Code cannot be empty." });
+        }
+
+        await DAO.UpdateCategoryDAO(data, code);
+
+        return ({ message: "Category successful updated." });
+    } catch (error: any) {
+        throw new Error("Something went wrong : " + error.message);
+    }
+}
+
+export const DeleteCategoryServices = async (code: string) => {
+    try {
+        await DAO.DeleteCategoryDAO(code);
+
+        return ({ message: "Category successful deleted." });
+    } catch (error: any) {
+        throw new Error("Something went wrong : " + error.message);
+    }
+}

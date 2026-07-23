@@ -8,6 +8,13 @@
       "when": 1784681148712,
       "tag": "0000_clear_famine",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1784788132461,
+      "tag": "0001_exotic_ghost_rider",
+      "breakpoints": true
     }
   ]
 }

@@ -2,6 +2,8 @@ import { desc, eq, isNull, like } from "drizzle-orm";
 import db from "../../config/db.js";
 import { category } from "../../database/schema/category.js";
 
+const now = new Date();
+
 export const GetAllCategoryDAO = async () => {
     try {
         const data = await db.select().from(category).where(isNull(category.deletedAt));
@@ -14,7 +16,7 @@ export const GetAllCategoryDAO = async () => {
 export const GetCategoryByCode = async (code: string) => {
     try {
         const data = await db.select().from(category).where(eq(category.code, code));
-        return data;
+        return data[0];
     } catch (error: any) {
         throw new Error("Something went wrong : " + error.message);
     }
@@ -23,7 +25,6 @@ export const GetCategoryByCode = async (code: string) => {
 export const CreateCategoryDAO = async (data: any) => {
     try {
         // Get month year
-        const now = new Date();
         const yearMonth = now.getFullYear().toString() + String(now.getMonth() + 1).padStart(2, "0");
         const prefix = `CTY-${yearMonth}-`;
 
@@ -59,10 +60,33 @@ export const CreateCategoryDAO = async (data: any) => {
     }
 }
 
-export const UpdateCategoryDAO = async (data: any) => {
+export const UpdateCategoryDAO = async (data: any, code: string) => {
     try {
-
+        await db
+            .update(category)
+            .set({
+                name: data.name,
+                description: data.description,
+                color: data.color,
+                icon: data.icon,
+                isActive: true,
+                updatedAt: now
+            })
+            .where(eq(category.code, code));
+        return category;
     } catch (error: any) {
-        
+        throw new Error("Something went wrong : " + error.message);
+    }
+}
+
+export const DeleteCategoryDAO = async (code: string) => {
+    try {
+        await db
+            .update(category)
+            .set({ deletedAt: now })
+            .where(eq(category.code, code));
+        return category;
+    } catch (error: any) {
+        throw new Error("Something went wrong : " + error.message);
     }
 }

@@ -4,7 +4,7 @@ export const payment = mysqlTable("payment", {
     code: varchar("code", { length: 50 }).primaryKey(),
     name: varchar("name", { length: 100 }).notNull(), 
     icon: varchar("icon", { length: 50 }), 
-    color: varchar("color", { length: 10 }), 
+    color: varchar("color", { length: 20 }), 
     description: text(), 
     isActive: boolean().default(true),
     createdAt: timestamp().defaultNow(), 
