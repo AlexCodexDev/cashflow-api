@@ -9,6 +9,6 @@ routerCategory.get('/fetch', Controller.GetAllCategoryController);
 routerCategory.get('/fetch/:code', Controller.GetCategoryByCode);
 routerCategory.post('/create', CategoryValidation(Schema.CategorySchema), Controller.CreateCatgoryController);
 routerCategory.put('/update/:code', CategoryValidation(Schema.CategorySchema), Controller.UpdateCategoryController);
-routerCategory.delete('/delete/:code', Controller.DeleteCategoryController);
+routerCategory.put('/delete/:code', Controller.DeleteCategoryController);
 
 export default routerCategory;

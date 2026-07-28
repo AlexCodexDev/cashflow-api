@@ -1,20 +1,20 @@
 import z from "zod";
 
 export const CategorySchema = z.object({
-    name: z.string().min(1).max(100),
-    color: z.string().max(20).optional(),
-    icon: z.string().max(50).optional(),
-    description: z.string().optional()
+    name: z.string().trim().min(1).max(100),
+    color: z.string().trim().max(20).optional(),
+    icon: z.string().trim().max(50).optional(),
+    description: z.string().trim().optional()
 });
 export type CategoryBody = z.infer<typeof CategorySchema>;
 
 export const CategoryParamSchema = z.object({
-    code: z.string().min(1)
+    code: z.string().trim().min(1, "Code is required.")
 });
 export type CategoryParams = z.infer<typeof CategoryParamSchema>;
 
 export const CategoryFilterSchema = z.object({
-    searchCode: z.string(),
-    searchName: z.string()
+    searchCode: z.string().trim(),
+    searchName: z.string().trim()
 });
 export type CategoryFilters = z.infer<typeof CategoryFilterSchema>;

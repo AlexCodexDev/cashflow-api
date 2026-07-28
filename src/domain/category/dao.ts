@@ -2,9 +2,32 @@ import { and, desc, eq, isNull, like, or } from "drizzle-orm";
 import db from "../../config/db.js";
 import { category } from "../../database/schema/category.js";
 import { io } from "../../server.js";
-import { CategoryFilters } from "./schema.js";
+import { CategoryBody, CategoryFilters, CategoryParams } from "./schema.js";
 
 const now = new Date();
+
+export async function getCode() {
+    // Get month year
+    const yearMonth = now.getFullYear().toString() + String(now.getMonth() + 1).padStart(2, "0");
+    const prefix = `CTY-${yearMonth}-`;
+
+    // Get latest category
+    const latestCat = (
+        await db
+        .select()
+        .from(category)
+        .where(like(category.code, `${prefix}%`))
+        .orderBy(desc(category.code))
+        .limit(1)
+    )[0];
+
+    let sequence = 1;
+    if(latestCat) {
+        sequence = Number(latestCat.code.split("-")[2]) + 1;
+    }
+
+    return `${prefix}${String(sequence).padStart(3, "0")}`;
+}
 
 export const GetAllCategoryDAO = async ({ searchCode, searchName }: CategoryFilters) => {
     const conditions = [];
@@ -34,7 +57,7 @@ export const GetAllCategoryDAO = async ({ searchCode, searchName }: CategoryFilt
     }
 }
 
-export const GetCategoryByCode = async (code: string) => {
+export const GetCategoryByCode = async ({ code }: CategoryParams) => {
     try {
         const data = await db.select().from(category).where(eq(category.code, code));
         return data[0];
@@ -43,31 +66,10 @@ export const GetCategoryByCode = async (code: string) => {
     }
 }
 
-export const CreateCategoryDAO = async (data: any) => {
+export const CreateCategoryDAO = async (data: CategoryBody) => {
     try {
-        // Get month year
-        const yearMonth = now.getFullYear().toString() + String(now.getMonth() + 1).padStart(2, "0");
-        const prefix = `CTY-${yearMonth}-`;
-
-        // Get latest category
-        const latestCat = (
-            await db
-            .select()
-            .from(category)
-            .where(like(category.code, `${prefix}%`))
-            .orderBy(desc(category.code))
-            .limit(1)
-        )[0];
-
-        let sequence = 1;
-        if(latestCat) {
-            sequence = Number(latestCat.code.split("-")[2]) + 1;
-        }
-
-        const code = `${prefix}${String(sequence).padStart(3, "0")}`;
-
         await db.insert(category).values({
-            code: code,
+            code: await getCode(),
             name: data.name,
             color: data.color,
             icon: data.icon,
@@ -84,7 +86,7 @@ export const CreateCategoryDAO = async (data: any) => {
     }
 }
 
-export const UpdateCategoryDAO = async (data: any, code: string) => {
+export const UpdateCategoryDAO = async ({ code }: CategoryParams, data: CategoryBody) => {
     try {
         await db
             .update(category)
@@ -106,7 +108,7 @@ export const UpdateCategoryDAO = async (data: any, code: string) => {
     }
 }
 
-export const DeleteCategoryDAO = async (code: string) => {
+export const DeleteCategoryDAO = async ({ code }: CategoryParams) => {
     try {
         await db
             .update(category)
