@@ -1,8 +1,8 @@
 import * as DAO from "./dao.js";
 
-export const GetAllCategoryServices = async () => {
+export const GetAllCategoryServices = async (filters: any) => {
     try {
-        const data = await DAO.GetAllCategoryDAO();
+        const data = await DAO.GetAllCategoryDAO(filters);
 
         return data;
     } catch (error: any) {

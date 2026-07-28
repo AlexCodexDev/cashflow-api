@@ -12,3 +12,9 @@ export const CategoryParamSchema = z.object({
     code: z.string().min(1)
 });
 export type CategoryParams = z.infer<typeof CategoryParamSchema>;
+
+export const CategoryFilterSchema = z.object({
+    searchCode: z.string(),
+    searchName: z.string()
+});
+export type CategoryFilters = z.infer<typeof CategoryFilterSchema>;

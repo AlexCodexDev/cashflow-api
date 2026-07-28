@@ -4,7 +4,7 @@ import { CategoryBody, CategoryParams } from "./schema.js";
 
 export const GetAllCategoryController = async (req: Request, res: Response) => {
     try {
-        const result = await Services.GetAllCategoryServices();
+        const result = await Services.GetAllCategoryServices(req.query);
 
         res.status(200).json(result);
     } catch (error: any) {

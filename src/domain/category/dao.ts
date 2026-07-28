@@ -1,12 +1,33 @@
-import { desc, eq, isNull, like } from "drizzle-orm";
+import { and, desc, eq, isNull, like, or } from "drizzle-orm";
 import db from "../../config/db.js";
 import { category } from "../../database/schema/category.js";
+import { io } from "../../server.js";
+import { CategoryFilters } from "./schema.js";
 
 const now = new Date();
 
-export const GetAllCategoryDAO = async () => {
+export const GetAllCategoryDAO = async ({ searchCode, searchName }: CategoryFilters) => {
+    const conditions = [];
+
+    if(searchCode?.trim()) {
+        conditions.push(like(category.code, `%${searchCode}%`));
+    }
+
+    if(searchName?.trim()) {
+        conditions.push(like(category.name, `%${searchName}%`));
+    }
+
     try {
-        const data = await db.select().from(category).where(isNull(category.deletedAt));
+        const data = await db
+            .select()
+            .from(category)
+            .where(
+                and (
+                    isNull(category.deletedAt),
+                    conditions.length ? or(...conditions) : undefined
+                )
+            );
+
         return data;
     } catch (error: any) {
         throw new Error("Something went wrong : " + error.message);
@@ -54,6 +75,9 @@ export const CreateCategoryDAO = async (data: any) => {
             isActive: true,
             createdAt: now,
         });
+
+        io.emit("category:changed");
+
         return category;
     } catch (error: any) {
         throw new Error("Something went wrong : " + error.message);
@@ -73,6 +97,9 @@ export const UpdateCategoryDAO = async (data: any, code: string) => {
                 updatedAt: now
             })
             .where(eq(category.code, code));
+
+        io.emit("category:changed");
+        
         return category;
     } catch (error: any) {
         throw new Error("Something went wrong : " + error.message);
@@ -85,6 +112,9 @@ export const DeleteCategoryDAO = async (code: string) => {
             .update(category)
             .set({ deletedAt: now })
             .where(eq(category.code, code));
+
+        io.emit("category:changed");
+
         return category;
     } catch (error: any) {
         throw new Error("Something went wrong : " + error.message);

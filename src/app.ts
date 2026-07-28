@@ -6,7 +6,7 @@ const allowedOrigins = [
     "http://localhost:3001",
     "http://127.0.0.1:3001",
 ];
-const app: Express = express();
+const app: Express = express();  
 
 app.use(express.json());
 app.use(cors({
