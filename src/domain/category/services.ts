@@ -54,6 +54,7 @@ export const DeleteCategoryServices = async (code: CategoryParams) => {
         await DAO.DeleteCategoryDAO(code);
         return ({ message: "Category successful deleted." });
     } catch (error: any) {
+        console.log(error);
         throw new Error("Something went wrong : " + error.message);
     }
 }

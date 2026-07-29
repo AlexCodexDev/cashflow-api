@@ -3,7 +3,6 @@ import * as Services from "./services.js";
 import { CategoryBody, CategoryFilters, CategoryParams } from "./schema.js";
 
 export const GetAllCategoryController = async (req: Request<{}, {}, {}, CategoryFilters>, res: Response) => {
-    console.log("Hai");
     const filters = req.query;
 
     try {

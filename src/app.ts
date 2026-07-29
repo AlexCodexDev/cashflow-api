@@ -4,7 +4,7 @@ import cors from "cors";
 
 const allowedOrigins = [
     "http://localhost:3001",
-    "http://127.0.0.1:3001",
+    "http://127.0.0.1:3001"
 ];
 const app: Express = express();
 

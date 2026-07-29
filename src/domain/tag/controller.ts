@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
 import * as Services from "./services.js";
-import { TagBody, TagParams } from "./schema.js";
+import { TagBody, TagFilters, TagParams } from "./schema.js";
 
-export const GetTagsController = async (req: Request, res: Response) => {
+export const GetAllTagsController = async (req: Request<{}, {}, {}, TagFilters>, res: Response) => {
+    const filters = req.query;
+
     try {
-        const result = await Services.GetTagsServices();
+        const result = await Services.GetAllTagsServices(filters);
         return res.status(200).json(result);
     } catch (error: any) {
         return res.status(500).json({ message: "Something went wrong : " + error.message });
@@ -24,7 +26,7 @@ export const GetTagByCodeController = async (req: Request<TagParams>, res: Respo
 
 export const CreateTagController = async (req: Request<{}, {}, TagBody>, res: Response) => {
     const data = req.body;
-    
+
     try {
         const result = await Services.CreateTagServices(data);
         return res.status(201).json(result);

@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const CategorySchema = z.object({
-    name: z.string().trim().min(1).max(100),
+    name: z.string().trim().min(1, "Name is required.").max(100),
     color: z.string().trim().max(20).optional(),
     icon: z.string().trim().max(50).optional(),
     description: z.string().trim().optional()

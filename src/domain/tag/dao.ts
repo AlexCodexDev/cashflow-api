@@ -1,7 +1,7 @@
-import { desc, eq, like } from "drizzle-orm";
+import { and, desc, eq, isNull, like, or } from "drizzle-orm";
 import db from "../../config/db.js";
 import { tag } from "../../database/schema/tag.js";
-import { TagBody, TagParams } from "./schema.js";
+import { TagBody, TagFilters, TagParams } from "./schema.js";
 import { io } from "../../server.js";
 
 const now = new Date();
@@ -26,15 +26,33 @@ export async function getCode() {
         sequence = Number(latestTag.code.split("-")[2]) + 1;
     }
 
-    return `${prefix}${String(sequence).padEnd(3, "0")}`;
+    return `${prefix}${String(sequence).padStart(3, "0")}`;
 }
 
-export const GetTagsDAO = async () => {
+export const GetAllTagsDAO = async ({ searchCode, searchName }: TagFilters) => {
+    const conditions = [];
+
+    if(searchCode?.trim()) {
+        conditions.push(like(tag.code, `%${searchCode}%`));
+    }
+
+    if(searchName?.trim()) {
+        conditions.push(like(tag.name, `%${searchName}%`));
+    }
+
     try {
-        const data = await db.select().from(tag);
+        const data = await db
+            .select()
+            .from(tag)
+            .where(
+                and(
+                    isNull(tag.deletedAt),
+                    conditions.length ? or(...conditions) : undefined
+                )
+            );
         return data;
     } catch (error: any) {
-        throw new Error(error.message);
+        throw new Error("Something went wrong : " + error.message);
     }
 }
 
@@ -43,7 +61,7 @@ export const GetTagByCodeDAO = async ({ code }: TagParams) => {
         const data = (await db.select().from(tag).where(eq(tag.code, code)))[0];
         return data;
     } catch (error: any) {
-        throw new Error(error.message);
+        throw new Error("Something went wrong : " + error.message);
     }
 }
 
@@ -63,9 +81,8 @@ export const CraeteTagDAO = async (data: TagBody) => {
         io.emit("tag:changed");
 
         return tag;
-
     } catch (error: any) {
-        throw new Error(error.message);
+        throw new Error("Somthing went wrong : " + error.message);
     }
 }
 
@@ -77,6 +94,7 @@ export const UpdateTagDAO = async ({ code }: TagParams, data: TagBody) => {
                 name: data.name,
                 description: data.description,
                 color: data.color,
+                isActive: true,
                 updatedAt: now
             })
             .where(eq(tag.code, code));
@@ -85,7 +103,7 @@ export const UpdateTagDAO = async ({ code }: TagParams, data: TagBody) => {
 
         return tag;
     } catch (error: any) {
-        throw new Error(error.message);
+        throw new Error("Something went wrong : " + error.message);
     }
 }
 
@@ -102,6 +120,6 @@ export const DeleteTagDAO = async ({ code }: TagParams) => {
 
         return tag;
     } catch (error: any) {
-        throw new Error(error.message);
+        throw new Error("Something went wrong : " + error.message);
     }
 }
