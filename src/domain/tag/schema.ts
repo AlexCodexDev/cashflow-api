@@ -7,13 +7,8 @@ export const TagSchema = z.object({
 });
 export type TagBody = z.infer<typeof TagSchema>;
 
-export const TagParamSchema = z.object({
-    code: z.string().trim().min(1, "Code is required.")
-});
-export type TagParams = z.infer<typeof TagParamSchema>;
-
 export const TagFilterSchema = z.object({
-    searchCode: z.string().trim(),
-    searchName: z.string().trim()
+    searchCode: z.string().trim().optional(),
+    searchName: z.string().trim().optional()
 });
 export type TagFilters = z.infer<typeof TagFilterSchema>;

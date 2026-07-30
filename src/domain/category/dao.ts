@@ -2,7 +2,8 @@ import { and, desc, eq, isNull, like, or } from "drizzle-orm";
 import db from "../../config/db.js";
 import { category } from "../../database/schema/category.js";
 import { io } from "../../server.js";
-import { CategoryBody, CategoryFilters, CategoryParams } from "./schema.js";
+import { CategoryBody, CategoryFilters } from "./schema.js";
+import { CheckCodeTypes } from "../../types/types.js";
 
 const now = new Date();
 
@@ -40,85 +41,59 @@ export const GetAllCategoryDAO = async ({ searchCode, searchName }: CategoryFilt
         conditions.push(like(category.name, `%${searchName}%`));
     }
 
-    try {
-        const data = await db
-            .select()
-            .from(category)
-            .where(
-                and (
-                    isNull(category.deletedAt),
-                    conditions.length ? or(...conditions) : undefined
-                )
-            );
+    const data = await db
+        .select()
+        .from(category)
+        .where(
+            and (
+                isNull(category.deletedAt),
+                conditions.length ? or(...conditions) : undefined
+            )
+        );
 
-        return data;
-    } catch (error: any) {
-        throw new Error("Something went wrong : " + error.message);
-    }
+    return data;
 }
 
-export const GetCategoryByCode = async ({ code }: CategoryParams) => {
-    try {
-        const data = await db.select().from(category).where(eq(category.code, code));
-        return data[0];
-    } catch (error: any) {
-        throw new Error("Something went wrong : " + error.message);
-    }
+export const GetCategoryByCodeDAO = async ({ code }: CheckCodeTypes) => {
+    const data = await db.select().from(category).where(eq(category.code, code));
+    return data[0];
 }
 
 export const CreateCategoryDAO = async (data: CategoryBody) => {
-    try {
-        await db.insert(category).values({
-            code: await getCode(),
+    await db.insert(category).values({
+        code: await getCode(),
+        name: data.name,
+        color: data.color,
+        icon: data.icon,
+        description: data.description,
+        isActive: true,
+        createdAt: now,
+    });
+
+    io.emit("category:changed");
+}
+
+export const UpdateCategoryDAO = async ({ code }: CheckCodeTypes, data: CategoryBody) => {
+    await db
+        .update(category)
+        .set({
             name: data.name,
+            description: data.description,
             color: data.color,
             icon: data.icon,
-            description: data.description,
             isActive: true,
-            createdAt: now,
-        });
+            updatedAt: now
+        })
+        .where(eq(category.code, code));
 
-        io.emit("category:changed");
-
-        return category;
-    } catch (error: any) {
-        throw new Error("Something went wrong : " + error.message);
-    }
+    io.emit("category:changed");
 }
 
-export const UpdateCategoryDAO = async ({ code }: CategoryParams, data: CategoryBody) => {
-    try {
-        await db
-            .update(category)
-            .set({
-                name: data.name,
-                description: data.description,
-                color: data.color,
-                icon: data.icon,
-                isActive: true,
-                updatedAt: now
-            })
-            .where(eq(category.code, code));
+export const DeleteCategoryDAO = async ({ code }: CheckCodeTypes) => {
+    await db
+        .update(category)
+        .set({ deletedAt: now })
+        .where(eq(category.code, code));
 
-        io.emit("category:changed");
-        
-        return category;
-    } catch (error: any) {
-        throw new Error("Something went wrong : " + error.message);
-    }
-}
-
-export const DeleteCategoryDAO = async ({ code }: CategoryParams) => {
-    try {
-        await db
-            .update(category)
-            .set({ deletedAt: now })
-            .where(eq(category.code, code));
-
-        io.emit("category:changed");
-
-        return category;
-    } catch (error: any) {
-        throw new Error("Something went wrong : " + error.message);
-    }
+    io.emit("category:changed");
 }

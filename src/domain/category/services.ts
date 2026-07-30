@@ -1,60 +1,28 @@
+import { CheckCodeTypes } from "../../types/types.js";
 import * as DAO from "./dao.js";
-import { CategoryBody, CategoryFilters, CategoryParams } from "./schema.js";
+import { CategoryBody, CategoryFilters } from "./schema.js";
 
 export const GetAllCategoryServices = async (filters: CategoryFilters) => {
-    try {
-        const data = await DAO.GetAllCategoryDAO(filters);
-        return data;
-    } catch (error: any) {
-        throw new Error("Something went wrong : " + error.message);
-    }
+    const data = await DAO.GetAllCategoryDAO(filters);
+    return data;
 }
 
-export const GetCategoryByCode = async (code: CategoryParams) => {
-    if(!code) {
-        return ({ message: "Code cannot be empty." });
-    }
-
-    try {
-        const data = await DAO.GetCategoryByCode(code);
-        return data;
-    } catch (error: any) {
-        throw new Error("Something went wrong : " + error.message);
-    }
+export const GetCategoryByCodeServices = async (code: CheckCodeTypes) => {
+    const data = await DAO.GetCategoryByCodeDAO(code);
+    return data;
 }
 
 export const CreateCategoryServices = async (data: CategoryBody) => {
-    try {
-        await DAO.CreateCategoryDAO(data);
-        return ({ message: "Category successful created." });
-    } catch (error: any) {
-        throw new Error("Something went wrong : " + error.message);
-    }
+    await DAO.CreateCategoryDAO(data);
+    return ({ message: "Category successful created." });
 }
 
-export const UpdateCategoryServices = async (code: CategoryParams, data: CategoryBody) => {
-    if(!code) {
-        return ({ message: "Code cannot be empty." });
-    }
-
-    try {
-        await DAO.UpdateCategoryDAO(code, data);
-        return ({ message: "Category successful updated." });
-    } catch (error: any) {
-        throw new Error("Something went wrong : " + error.message);
-    }
+export const UpdateCategoryServices = async (code: CheckCodeTypes, data: CategoryBody) => {
+    await DAO.UpdateCategoryDAO(code, data);
+    return ({ message: "Category successful updated." });
 }
 
-export const DeleteCategoryServices = async (code: CategoryParams) => {
-    if(!code) {
-        return ({ message: "Code cannot be empty." });
-    }
-
-    try {
-        await DAO.DeleteCategoryDAO(code);
-        return ({ message: "Category successful deleted." });
-    } catch (error: any) {
-        console.log(error);
-        throw new Error("Something went wrong : " + error.message);
-    }
+export const DeleteCategoryServices = async (code: CheckCodeTypes) => {
+    await DAO.DeleteCategoryDAO(code);
+    return ({ message: "Category successful deleted." });
 }

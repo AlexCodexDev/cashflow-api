@@ -8,13 +8,8 @@ export const CategorySchema = z.object({
 });
 export type CategoryBody = z.infer<typeof CategorySchema>;
 
-export const CategoryParamSchema = z.object({
-    code: z.string().trim().min(1, "Code is required.")
-});
-export type CategoryParams = z.infer<typeof CategoryParamSchema>;
-
 export const CategoryFilterSchema = z.object({
-    searchCode: z.string().trim(),
-    searchName: z.string().trim()
+    searchCode: z.string().trim().optional(),
+    searchName: z.string().trim().optional()
 });
 export type CategoryFilters = z.infer<typeof CategoryFilterSchema>;

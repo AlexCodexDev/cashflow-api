@@ -1,9 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { ZodType } from "zod";
 
-export const TagValidation = (schema: ZodType) => (req: Request, res: Response, next: NextFunction) => {
-    const result = schema.safeParse(req.body);
-
+export const Validation = (schema: ZodType, target: "body" | "params" | "query") => (req: Request, res: Response, next: NextFunction) => {
+    const result = schema.safeParse(req[target]);
     if(!result.success) {
         return res.status(400).json({
             message: "Validation failed.",
@@ -11,8 +10,9 @@ export const TagValidation = (schema: ZodType) => (req: Request, res: Response, 
         });
     }
 
-    req.body = result.data;
-    next();
-}
+    if(target === "body") {
+        req.body = result.data;
+    }
 
-export default TagValidation;
+    next();
+};
