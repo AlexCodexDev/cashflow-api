@@ -8,7 +8,9 @@ const routerCategory: Router = Router();
 
 routerCategory.get('/fetch', Validation(CategoryFilterSchema, "query"), Controller.GetAllCategoryController);
 routerCategory.get('/fetch/:code', Validation(CheckCodeSchema, "params"), Controller.GetCategoryByCodeController);
+
 routerCategory.post('/create', Validation(CategorySchema, "body"), Controller.CreateCatgoryController);
+
 routerCategory.put('/update/:code', Validation(CheckCodeSchema, "params"), Validation(CategorySchema, "body"), Controller.UpdateCategoryController);
 routerCategory.put('/delete/:code', Validation(CheckCodeSchema, "params"), Controller.DeleteCategoryController);
 

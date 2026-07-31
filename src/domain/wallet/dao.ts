@@ -9,7 +9,7 @@ import { CheckCodeTypes } from "../../types/types.js";
 const now = new Date();
 
 export async function getCode() {
-    const yearMonth = now.getFullYear().toString + String(now.getMonth() + 1).padStart(2, "0");
+    const yearMonth = now.getFullYear().toString() + String(now.getMonth() + 1).padStart(2, "0");
     const prefix = `WAL-${yearMonth}-`;
 
     const latestWallet = (

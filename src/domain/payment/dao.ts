@@ -30,6 +30,18 @@ export async function getCode() {
     return `${prefix}${String(sequence).padStart(3, "0")}`;
 }
 
+export const GetOptionsDAO = async () => {
+    const data = await db
+        .select({
+            code: payment.code,
+            name: payment.name
+        })
+        .from(payment)
+        .where(isNull(payment.deletedAt));
+
+    return data;
+}
+
 export const GetAllPaymentDAO = async ({ searchCode, searchName }: PaymentFilter) => {
     const conditions = [];
 

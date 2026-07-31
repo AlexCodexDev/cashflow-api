@@ -2,6 +2,11 @@ import { CheckCodeTypes } from "../../types/types.js";
 import * as DAO from "./dao.js";
 import { PaymentBody, PaymentFilter } from "./schema.js";
 
+export const GetOptionsServices = async () => {
+    const data = await DAO.GetOptionsDAO();
+    return data;
+}
+
 export const GetAllPaymentServices = async (filters: PaymentFilter) => {
     const data = await DAO.GetAllPaymentDAO(filters);
     return data;
