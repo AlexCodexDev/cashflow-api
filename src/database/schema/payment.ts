@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import { boolean, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
 import { wallet } from "./wallet.js";
+import { financeBook } from "./financeBook.js";
 
 export const payment = mysqlTable("payment", {
     code: varchar("code", { length: 50 }).primaryKey(),
@@ -15,5 +16,5 @@ export const payment = mysqlTable("payment", {
 });
 
 export const paymentRelations = relations(payment, ({ many }) => ({
-    wallets: many(wallet)
+    wallets: many(wallet),
 }));

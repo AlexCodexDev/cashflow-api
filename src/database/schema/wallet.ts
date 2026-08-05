@@ -1,12 +1,18 @@
-import { boolean, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { boolean, decimal, mysqlTable, timestamp, varchar } from "drizzle-orm/mysql-core";
 import { payment } from "./payment.js";
 import { relations } from "drizzle-orm";
+import { financeBook } from "./financeBook.js";
 
 export const wallet = mysqlTable("wallet", {
     code: varchar("code", { length: 50 }).primaryKey(),
-    paymentCode: varchar("paymentCode", { length: 50 }).notNull().references(() => payment.code),
+    financeBookCode: varchar("financeBookCode", { length: 50 })
+        .notNull()
+        .references(() => financeBook.code),
+    paymentCode: varchar("paymentCode", { length: 50 })
+        .references(() => payment.code),
     name: varchar("name", { length: 100 }).notNull(),
-    description: text(),
+    openingBalance: decimal("openingBalance", { precision: 12, scale: 2 }).notNull(),
+    currentBalance: decimal("currentBalance", { precision: 12, scale: 2 }).notNull(),
     isActive: boolean().default(true),
     createdAt: timestamp().defaultNow(),
     updatedAt: timestamp(),
@@ -17,5 +23,9 @@ export const walletRelations = relations(wallet, ({ one }) => ({
     payment: one(payment, {
         fields: [wallet.paymentCode],
         references: [payment.code]
+    }),
+    financeBook: one(financeBook, {
+        fields: [wallet.financeBookCode],
+        references: [financeBook.code]
     })
 }));

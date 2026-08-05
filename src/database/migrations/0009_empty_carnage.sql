@@ -1,0 +1,1 @@
+ALTER TABLE `finance_book` ADD `type` enum('PERSONAL','BUSSINESS') DEFAULT 'PERSONAL' NOT NULL;

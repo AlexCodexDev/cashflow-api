@@ -1,4 +1,6 @@
 import { boolean, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { relations } from "drizzle-orm";
+import { transaction } from "./transaction.js";
 
 export const contact = mysqlTable("contact", {
     code: varchar("code", { length: 50 }).primaryKey(),
@@ -12,3 +14,7 @@ export const contact = mysqlTable("contact", {
     updatedAt: timestamp(),
     deletedAt: timestamp()
 });
+
+export const contactRelations = relations(contact, ({ many }) => ({
+    transaction: many(transaction)
+}));
