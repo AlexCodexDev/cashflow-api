@@ -14,3 +14,9 @@ export const FinanceBookParamSchema = z.object({
     code: z.string().trim().min(1, "Code is required.").max(50)
 });
 export type FinanceBookParams = z.infer<typeof FinanceBookParamSchema>;
+
+export const FinanceBookFilterSchema = z.object({
+    searchName: z.string().trim().optional(),
+    searchType: z.string().trim().optional()
+});
+export type FinanceBookFilter = z.infer<typeof FinanceBookFilterSchema>;

@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import * as Services from "./services.js";
-import { FinanceBookParams, FinanceBookTypes } from "./schema.js";
+import { FinanceBookFilter, FinanceBookParams, FinanceBookTypes } from "./schema.js";
 
-export const GetAllFinanceBookController = async (req: Request, res: Response) => {
+export const GetAllFinanceBookController = async (req: Request<{}, {}, {}, FinanceBookFilter>, res: Response) => {
     try {
-        const result = await Services.GetAllFinanceBookServices();
+        const result = await Services.GetAllFinanceBookServices(req.query);
         return res.status(200).json(result);
     } catch (error: any) {
         console.log(error);

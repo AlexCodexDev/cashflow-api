@@ -1,8 +1,8 @@
 import * as DAO from "./dao.js"
-import { FinanceBookParams, FinanceBookTypes } from "./schema.js";
+import { FinanceBookFilter, FinanceBookParams, FinanceBookTypes } from "./schema.js";
 
-export const GetAllFinanceBookServices = async () => {
-    const data = await DAO.GetAllFinanceBookDAO();
+export const GetAllFinanceBookServices = async (filter: FinanceBookFilter) => {
+    const data = await DAO.GetAllFinanceBookDAO(filter);
     return data;
 }
 

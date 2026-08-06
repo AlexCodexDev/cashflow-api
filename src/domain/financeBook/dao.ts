@@ -1,7 +1,7 @@
-import { desc, eq, isNull, like } from "drizzle-orm"
+import { and, desc, eq, isNull, like, or } from "drizzle-orm"
 import db from "../../config/db.js"
 import { financeBook } from "../../database/schema/financeBook.js"
-import { FinanceBookParams, FinanceBookTypes } from "./schema.js";
+import { FinanceBookFilter, FinanceBookParams, FinanceBookTypes } from "./schema.js";
 import { io } from "../../server.js";
 
 const now = new Date();
@@ -27,11 +27,26 @@ export async function getCode() {
     return `${prefix}${String(sequence).padStart(3, "0")}`;
 }
 
-export const GetAllFinanceBookDAO = async () => {
+export const GetAllFinanceBookDAO = async (filter: FinanceBookFilter) => {
+    const conditions = [];
+
+    if(filter.searchName?.trim()) {
+        conditions.push(like(financeBook.name, `%${filter.searchName}%`));
+    }
+
+    if(filter.searchType) {
+        conditions.push(eq(financeBook.type, filter.searchType as "PERSONAL" | "BUSSINESS"));
+    }
+
     const data = db
         .select()
         .from(financeBook)
-        .where(isNull(financeBook.deletedAt));
+        .where(
+            and(
+                isNull(financeBook.deletedAt),
+                conditions.length ? or(...conditions) : undefined
+            )
+        );
 
     return data;
 }
