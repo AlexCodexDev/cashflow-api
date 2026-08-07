@@ -4,6 +4,7 @@ import { transaction } from "./transaction.js";
 
 export const category = mysqlTable("category", {
     code: varchar("code", { length: 50 }).primaryKey(),
+    financeBookCode: varchar("financeBookCode", { length: 20 }).notNull(),
     name: varchar("name", { length: 100 }).notNull(),
     icon: varchar("icon", { length: 50 }),
     color: varchar("color", { length: 20 }),

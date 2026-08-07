@@ -62,6 +62,7 @@ export const GetCategoryByCodeDAO = async ({ code }: CheckCodeTypes) => {
 export const CreateCategoryDAO = async (data: CategoryBody) => {
     await db.insert(category).values({
         code: await getCode(),
+        financeBookCode: data.financeBookCode,
         name: data.name,
         color: data.color,
         icon: data.icon,
