@@ -3,7 +3,7 @@ import db from "../../config/db.js";
 import { category } from "../../database/schema/category.js";
 import { io } from "../../server.js";
 import { CategoryBody, CategoryFilters } from "./schema.js";
-import { CheckCodeTypes } from "../../types/types.js";
+import { CheckCodeTypes, CheckFinanceBookCodeSchema, CheckFinanceBookCodeTypes } from "../../types/types.js";
 
 const now = new Date();
 
@@ -15,7 +15,9 @@ export async function getCode() {
     // Get latest category
     const latestCat = (
         await db
-        .select()
+        .select({
+            code: category.code
+        })
         .from(category)
         .where(like(category.code, `${prefix}%`))
         .orderBy(desc(category.code))
@@ -55,8 +57,23 @@ export const GetAllCategoryDAO = async ({ searchCode, searchName }: CategoryFilt
 }
 
 export const GetCategoryByCodeDAO = async ({ code }: CheckCodeTypes) => {
-    const data = await db.select().from(category).where(eq(category.code, code));
+    const data = await db
+        .select()
+        .from(category)
+        .where(eq(category.code, code));
     return data[0];
+}
+
+export const GetCategoryByFinanceBookCodeDAO = async ({ financeBookCode }: CheckFinanceBookCodeTypes) => {
+    const data = await db
+        .select({
+            code: category.code,
+            name: category.name
+        })
+        .from(category)
+        .where(eq(category.financeBookCode, financeBookCode));
+
+    return data;
 }
 
 export const CreateCategoryDAO = async (data: CategoryBody) => {
@@ -64,9 +81,9 @@ export const CreateCategoryDAO = async (data: CategoryBody) => {
         code: await getCode(),
         financeBookCode: data.financeBookCode,
         name: data.name,
-        color: data.color,
-        icon: data.icon,
-        description: data.description,
+        color: data.color ?? null,
+        icon: data.icon ?? null,
+        description: data.description ?? null,
         isActive: true,
         createdAt: now,
     });

@@ -4,7 +4,7 @@ import { payment } from "../../database/schema/payment.js";
 import { wallet } from "../../database/schema/wallet.js";
 import { WalletBody, WalletFilter } from "./schema.js";
 import { io } from "../../server.js";
-import { CheckCodeTypes } from "../../types/types.js";
+import { CheckCodeTypes, CheckFinanceBookCodeSchema, CheckFinanceBookCodeTypes } from "../../types/types.js";
 
 const now = new Date();
 
@@ -14,7 +14,9 @@ export async function getCode() {
 
     const latestWallet = (
         await db
-        .select()
+        .select({
+            code: wallet.code
+        })
         .from(wallet)
         .where(like(wallet.code, `${prefix}%`))
         .orderBy(desc(wallet.code))
@@ -44,7 +46,6 @@ export const GetAllWalletDAO = async ({ searchCode, searchName }: WalletFilter) 
         .select({
             code: wallet.code,
             name: wallet.name,
-            description: wallet.description,
             payment: {
                 code: payment.code,
                 name: payment.name
@@ -66,18 +67,24 @@ export const GetWalletByCodeDAO = async ({ code }: CheckCodeTypes) => {
     const data = await db
         .select({
             code: wallet.code,
-            name: wallet.name,
-            description: wallet.description,
-            payment: {
-                code: payment.code,
-                name: payment.name
-            }
+            name: wallet.name
         })
         .from(wallet)
-        .leftJoin(payment, eq(wallet.paymentCode, payment.code))
         .where(eq(wallet.code, code));
 
     return data[0];
+}
+
+export const GetWalletByFinanceBookCodeDAO = async ({ financeBookCode }: CheckFinanceBookCodeTypes) => {
+    const data = await db
+        .select({
+            code: wallet.code,
+            name: wallet.name
+        })
+        .from(wallet)
+        .where(eq(wallet.financeBookCode, financeBookCode));
+
+    return data;
 }
 
 export const CreateWalletDAO = async (data: WalletBody) => {
@@ -86,10 +93,10 @@ export const CreateWalletDAO = async (data: WalletBody) => {
         .values({
             code: await getCode(),
             name: data.name,
-            paymentCode: data.paymentCode,
-            description: data.description,
+            financeBookCode: data.financeBookCode,
+            openingBalance: data.openingBalance,
+            currentBalance: data.currentBalance,
             isActive: true,
-            createdAt: now
         });
 
     io.emit("wallet:changed");
@@ -100,8 +107,8 @@ export const UpdateWalletDAO = async ({ code }: CheckCodeTypes, data: WalletBody
         .update(wallet)
         .set({
             name: data.name,
-            paymentCode: data.paymentCode,
-            description: data.description,
+            openingBalance: data.openingBalance,
+            currentBalance: data.currentBalance,
             updatedAt: now
         })
         .where(eq(wallet.code, code));

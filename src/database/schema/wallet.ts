@@ -11,8 +11,8 @@ export const wallet = mysqlTable("wallet", {
     paymentCode: varchar("paymentCode", { length: 50 })
         .references(() => payment.code),
     name: varchar("name", { length: 100 }).notNull(),
-    openingBalance: decimal("openingBalance", { precision: 12, scale: 2 }).notNull(),
-    currentBalance: decimal("currentBalance", { precision: 12, scale: 2 }).notNull(),
+    openingBalance: decimal("openingBalance", { precision: 12, scale: 2, mode: "number" }).notNull(),
+    currentBalance: decimal("currentBalance", { precision: 12, scale: 2, mode: "number" }).notNull(),
     isActive: boolean().default(true),
     createdAt: timestamp().defaultNow(),
     updatedAt: timestamp(),

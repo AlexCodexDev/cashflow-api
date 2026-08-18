@@ -1,13 +1,14 @@
 import { Router } from "express";
 import * as Controller from "../domain/wallet/controller.js";
 import { Validation } from "../middleware/validation.js";
-import { CheckCodeSchema } from "../types/types.js";
+import { CheckCodeSchema, CheckFinanceBookCodeSchema } from "../types/types.js";
 import { WalletFilterSchema, WalletSchema } from "../domain/wallet/schema.js";
 
 const routerWallet: Router = Router();
 
 routerWallet.get("/fetch", Validation(WalletFilterSchema, "query"), Controller.GetAllWalletController);
-routerWallet.get("/fetch/:code", Validation(CheckCodeSchema, "params"), Controller.GetWalletByCodeController);
+routerWallet.get("/fetch-by-code/:code", Validation(CheckCodeSchema, "params"), Controller.GetWalletByCodeController);
+routerWallet.get('/fetch-by-book-code/:financeBookCode', Validation(CheckFinanceBookCodeSchema, "params"), Controller.GetWalletByFinanceBookCodeController);
 
 routerWallet.post("/create", Validation(WalletSchema, "body"), Controller.CreateWalletController);
 

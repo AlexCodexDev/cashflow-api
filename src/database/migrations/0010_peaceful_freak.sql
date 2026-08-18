@@ -1,0 +1,1 @@
+ALTER TABLE `category` ADD `financeBookCode` varchar(20) NOT NULL;

@@ -71,6 +71,13 @@
       "when": 1785915546130,
       "tag": "0009_empty_carnage",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1787019663221,
+      "tag": "0010_peaceful_freak",
+      "breakpoints": true
     }
   ]
 }

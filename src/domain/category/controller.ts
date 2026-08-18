@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import * as Services from "./services.js";
 import { CategoryBody, CategoryFilters } from "./schema.js";
-import { CheckCodeTypes } from "../../types/types.js";
+import { CheckCodeTypes, CheckFinanceBookCodeTypes } from "../../types/types.js";
 
 export const GetAllCategoryController = async (req: Request<{}, {}, {}, CategoryFilters>, res: Response) => {
     try {
@@ -21,6 +21,22 @@ export const GetCategoryByCodeController = async (req: Request<CheckCodeTypes>, 
     
     try {
         const result = await Services.GetCategoryByCodeServices(code);
+        return res.status(200).json(result);
+    } catch (error: any) {
+        console.log(error.message);
+
+        return res.status(500).json({
+            message: "Internal server error."
+        });
+    }
+}
+
+export const GetCategoryByFinanceBookCodeController = async (req: Request<CheckFinanceBookCodeTypes>, res: Response) => {
+    const code = req.params;
+
+    try {
+        const result = await Services.GetCategoryByFinanceBookCodeServices(code);
+        console.log(result);
         return res.status(200).json(result);
     } catch (error: any) {
         console.log(error.message);

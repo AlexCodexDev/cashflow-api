@@ -1,4 +1,4 @@
-import { CheckCodeTypes } from "../../types/types.js";
+import { CheckCodeTypes, CheckFinanceBookCodeTypes } from "../../types/types.js";
 import * as DAO from "./dao.js";
 import { CategoryBody, CategoryFilters } from "./schema.js";
 
@@ -9,6 +9,11 @@ export const GetAllCategoryServices = async (filters: CategoryFilters) => {
 
 export const GetCategoryByCodeServices = async (code: CheckCodeTypes) => {
     const data = await DAO.GetCategoryByCodeDAO(code);
+    return data;
+}
+
+export const GetCategoryByFinanceBookCodeServices = async (code: CheckFinanceBookCodeTypes) => {
+    const data = await DAO.GetCategoryByFinanceBookCodeDAO(code);
     return data;
 }
 

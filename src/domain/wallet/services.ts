@@ -1,5 +1,5 @@
 import { checkCode } from "../../lib/checkCode.js";
-import { CheckCodeTypes } from "../../types/types.js";
+import { CheckCodeTypes, CheckFinanceBookCodeTypes } from "../../types/types.js";
 import * as DAO from "./dao.js";
 import { WalletBody, WalletFilter } from "./schema.js";
 
@@ -10,6 +10,11 @@ export const GetAllWalletServices = async (filters: WalletFilter) => {
 
 export const GetWalletByCodeServices = async (code: CheckCodeTypes) => {
     const data = await DAO.GetWalletByCodeDAO(code);
+    return data;
+}
+
+export const GetWalletByFinanceBookCodeServices = async (code: CheckFinanceBookCodeTypes) => {
+    const data = await DAO.GetWalletByFinanceBookCodeDAO(code);
     return data;
 }
 

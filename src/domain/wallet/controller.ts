@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import * as Services from "./services.js";
 import { WalletBody } from "./schema.js";
-import { CheckCodeTypes } from "../../types/types.js";
+import { CheckCodeTypes, CheckFinanceBookCodeTypes } from "../../types/types.js";
 
 export const GetAllWalletController = async (req: Request, res: Response) => {
     try {
@@ -19,6 +19,19 @@ export const GetAllWalletController = async (req: Request, res: Response) => {
 export const GetWalletByCodeController = async (req: Request<CheckCodeTypes>, res: Response) => {
     try {
         const result = await Services.GetWalletByCodeServices(req.params);
+        return res.status(200).json(result);
+    } catch (error: any) {
+        console.log(error.message);
+
+        return res.status(500).json({
+            message: "Internal server error."
+        });
+    }
+}
+
+export const GetWalletByFinanceBookCodeController = async (req: Request<CheckFinanceBookCodeTypes>, res: Response) => {
+    try {
+        const result = await Services.GetWalletByFinanceBookCodeServices(req.params);
         return res.status(200).json(result);
     } catch (error: any) {
         console.log(error.message);

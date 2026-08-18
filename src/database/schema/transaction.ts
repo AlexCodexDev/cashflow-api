@@ -16,7 +16,7 @@ export const transaction = mysqlTable("transaction", {
     contactCode: varchar("contactCode", { length: 50 })
         .references(() => contact.code),
     name: varchar("name", { length: 100 }).notNull(),
-    amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),
+    amount: decimal("amount", { precision: 12, scale: 2, mode: "number" }).notNull(),
     type: mysqlEnum(["INCOME","EXPENSE"]).notNull(),
     icon: varchar("icon", { length: 50 }),
     color: varchar("color", { length: 20 }),
