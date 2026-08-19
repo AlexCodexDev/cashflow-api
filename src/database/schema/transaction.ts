@@ -22,7 +22,8 @@ export const transaction = mysqlTable("transaction", {
     color: varchar("color", { length: 20 }),
     description: text(),
     createdAt: timestamp().defaultNow(),
-    updatedAt: timestamp()
+    updatedAt: timestamp(),
+    deletedAt: timestamp()
 });
 
 export const transactionRelations = relations(transaction, ({ one }) => ({

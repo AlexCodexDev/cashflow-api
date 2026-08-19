@@ -14,8 +14,3 @@ export const TransactionSchema = z.object({
     description: z.string().trim().optional()
 });
 export type TransactionBody = z.infer<typeof TransactionSchema>;
-
-export const TransactionParamSchema = z.object({
-    code: z.string().trim().min(1, "Code is required.")
-});
-export type TransactionParams = z.infer<typeof TransactionParamSchema>;
