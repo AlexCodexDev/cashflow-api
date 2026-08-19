@@ -1,8 +1,13 @@
 import * as DAO from "./dao.js"
-import { TransactionBody } from "./schema.js";
+import { TransactionBody, TransactionParams } from "./schema.js";
 
 export const GetAllTransactionServices = async () => {
     const data = await DAO.GetAllTransactionDAO();
+    return data;
+}
+
+export const GetTransactionByCodeServices = async (code: TransactionParams) => {
+    const data = await DAO.GetTransactionByCodeDAO(code);
     return data;
 }
 

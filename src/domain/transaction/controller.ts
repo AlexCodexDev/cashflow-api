@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import * as Services from "./services.js";
-import { TransactionBody } from "./schema.js";
+import { TransactionBody, TransactionParams } from "./schema.js";
 
 export const GetAllTransactionController = async (req: Request, res: Response) => {
     try {
@@ -8,6 +8,19 @@ export const GetAllTransactionController = async (req: Request, res: Response) =
         return res.status(200).json(result);
     } catch (error: any) {
         console.log(error);
+
+        return res.status(500).json({
+            message: "Internal server error."
+        });
+    }
+}
+
+export const GetTransactionByCodeController = async (req: Request<TransactionParams>, res: Response) => {
+    try {
+        const result = await Services.GetTransactionByCodeServices(req.params);
+        return res.status(200).json(result);
+    } catch (error: any) {
+        console.log(error.message);
 
         return res.status(500).json({
             message: "Internal server error."
