@@ -64,14 +64,33 @@ export const GetCategoryByCodeDAO = async ({ code }: CheckCodeTypes) => {
     return data[0];
 }
 
-export const GetCategoryByFinanceBookCodeDAO = async ({ financeBookCode }: CheckFinanceBookCodeTypes) => {
+export const GetCategoryByFinanceBookCodeDAO = async ({ financeBookCode }: CheckFinanceBookCodeTypes, { searchCode, searchName }: CategoryFilters) => {
+    const conditions = [];
+
+    if(searchCode?.trim()) {
+        conditions.push(like(category.code, `%${searchCode}%`));
+    }
+
+    if(searchName?.trim()) {
+        conditions.push(like(category.name, `%${searchName}%`));
+    }
+
     const data = await db
         .select({
             code: category.code,
-            name: category.name
+            name: category.name,
+            icon: category.icon,
+            color: category.color,
+            description: category.description
         })
         .from(category)
-        .where(eq(category.financeBookCode, financeBookCode));
+        .where(
+            and(
+                eq(category.financeBookCode, financeBookCode),
+                conditions.length ? or(...conditions) : undefined,
+                isNull(category.deletedAt)
+            )
+        );
 
     return data;
 }

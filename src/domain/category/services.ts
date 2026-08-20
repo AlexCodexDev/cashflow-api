@@ -12,8 +12,8 @@ export const GetCategoryByCodeServices = async (code: CheckCodeTypes) => {
     return data;
 }
 
-export const GetCategoryByFinanceBookCodeServices = async (code: CheckFinanceBookCodeTypes) => {
-    const data = await DAO.GetCategoryByFinanceBookCodeDAO(code);
+export const GetCategoryByFinanceBookCodeServices = async (code: CheckFinanceBookCodeTypes, filters: CategoryFilters) => {
+    const data = await DAO.GetCategoryByFinanceBookCodeDAO(code, filters);
     return data;
 }
 

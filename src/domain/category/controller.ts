@@ -31,12 +31,12 @@ export const GetCategoryByCodeController = async (req: Request<CheckCodeTypes>, 
     }
 }
 
-export const GetCategoryByFinanceBookCodeController = async (req: Request<CheckFinanceBookCodeTypes>, res: Response) => {
+export const GetCategoryByFinanceBookCodeController = async (req: Request<CheckFinanceBookCodeTypes, {}, {}, CategoryFilters>, res: Response) => {
     const code = req.params;
+    const filters = req.query;
 
     try {
-        const result = await Services.GetCategoryByFinanceBookCodeServices(code);
-        console.log(result);
+        const result = await Services.GetCategoryByFinanceBookCodeServices(code, filters);
         return res.status(200).json(result);
     } catch (error: any) {
         console.log(error.message);
